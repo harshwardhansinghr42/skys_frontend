@@ -1,3 +1,18 @@
 .login-form {
     padding: 30px;
 }
+ul.error-list {
+    list-style: none;
+}
+ul.error-list li {
+    color: red;
+}
+@media only screen 
+and (min-width : 768px) {
+  .form-input-box {
+    width: 20% !important;
+  }
+}
+.form-input-box, .submit-button {
+  margin: 0 auto;
+}

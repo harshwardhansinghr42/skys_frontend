@@ -1,39 +1,68 @@
 <template>
-  <div style="display: flex; flex-direction: row">
-    <v-otp-input
-      ref="otpInput"
-      input-classes="otp-input"
-      separator="-"
-      :num-inputs="4"
-      :should-auto-focus="true"
-      :is-input-num="true"
-      @on-change="handleOnChange"
-      @on-complete="handleOnComplete"
-    />
-
-    <button @click="handleClearInput()">Clear Input</button>
+  <div>
+    <p v-if="errors.length">
+			<b>Please correct the following error(s):</b>
+			<ul class='error-list'>
+				<li v-for="error in errors" :key="error">
+					{{ error }}
+				</li>
+			</ul>
+		</p>
+    <div class="otp-container" style="display: flex; flex-direction: row">
+      <v-otp-input
+        ref="otpInput"
+        input-classes="otp-input"
+        separator="-"
+        :num-inputs="6"
+        :should-auto-focus="true"
+        :is-input-num="true"
+        @on-change="handleOnChange"
+        @on-complete="handleOnComplete"
+      />
+    </div>
   </div>
 </template>
 
 <script>
+import api from "@/services/api";
+import { utilFunctionService } from "@/utils/utils.service";
 
 export default {
   name: "OtpVerification",
+  data() {
+    return {
+      errors: []
+    };
+  },
   methods: {
     handleOnComplete(value) {
-      console.log("OTP completed: ", value);
+      api
+        .verifyOtp(value)
+        .then((res) => {
+          if(res.status == 200){
+            const result = JSON.stringify(res["data"]);
+            utilFunctionService.setLocalStorageService("AuthenticationToken", result);
+            this.$router.replace({ name: "order-list" });
+          }
+        })
+        .catch((error) => {
+          this.errors.push(error.response.data["errors"]);
+        });
     },
     handleOnChange(value) {
       console.log("OTP changed: ", value);
-    },
-    handleClearInput() {
-      this.$refs.otpInput.clearInput();
     },
   },
 };
 </script>
 
 <style>
+@media screen and (min-width: 800px) {
+  .otp-container{
+    padding-left: 730px;
+    padding-top: 100px;
+  }
+}
 .otp-input {
   width: 40px;
   height: 40px;

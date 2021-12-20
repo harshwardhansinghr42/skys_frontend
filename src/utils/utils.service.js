@@ -21,27 +21,15 @@ export const utilFunctionService = {
     },
 
     getAuthToken() {
-        if (this.getLocalStorageService('user')) {
-            return this.getLocalStorageService('user').authorization_token;
+        if (this.getLocalStorageService('AuthenticationToken')) {
+            return this.getLocalStorageService('AuthenticationToken').AuthenticationToken;
         } else {
             return false;
         }
     },
 
-    getUserRoles() {
-      if (this.getLocalStorageService('user')) {
-          return this.getLocalStorageService('user').users.attributes.user_roles;
-      } else {
-          return false;
-      }
-    },
-
     removeLocalStorageService(keyname) {
         localStorage.removeItem(keyname);
-    },
-
-    removeSessionStorageService(keyname) {
-        sessionStorage.removeItem(keyname);
     },
 
     showLoader() {
@@ -127,8 +115,8 @@ export const utilFunctionService = {
       return `${(bytes / (1024 ** i)).toFixed(1)} ${sizes[i]}`
     },
 
-    sessionExpire(message) {
-      this.removeLoalStorageService("user");
-      this.showerr(message);
+    sessionExpire() {
+      this.removeLocalStorageService("AuthenticationToken");
+      this.removeLocalStorageService("user");
     }
 }

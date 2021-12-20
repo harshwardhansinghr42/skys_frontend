@@ -11,11 +11,11 @@ export default {
   async execute(method, resource, data, config) {
     let accessToken = utilFunctionService.getAuthToken();
     return instance({
-      method: 'POST',
+      method: method,
       url: resource,
       data,
       headers: {
-        Authorization: `${accessToken}`,
+        AuthenticationToken: `${accessToken}`,
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods":
           "GET, POST, PATCH, PUT, DELETE, OPTIONS",
@@ -33,7 +33,7 @@ export default {
       url: resource,
       data,
       headers: {
-        Authorization: `${accessToken}`,
+        AuthenticationToken: `${accessToken}`,
         'Content-Type': 'multipart/form-data',
       },
       ...config
@@ -41,9 +41,40 @@ export default {
   },
 
   loginRegisterUser(email_or_phone) {
-    let _result = this.execute('POST', '/api/v1/registrations', { email_or_phone })
-    const result = JSON.stringify(_result["data"])
-    utilFunctionService.setLocalStorageService("user", result)
-    return _result
+    return this.execute('POST', '/api/v1/registrations', { email_or_phone })
+  },
+
+  verifyOtp(otp){
+    let user = utilFunctionService.getLocalStorageService('user')
+    let params = {
+      otp: otp
+    }
+    return this.execute('POST', '/api/v1/users/'+ user.id +'/otp_verifications', params)
+  },
+
+  fetchStates(){
+    return this.execute('GET', '/api/v1/states')
+  },
+
+  fetchCities(state_code){
+    return this.execute('GET', '/api/v1/cities?state_code='+state_code)
+  },
+
+  buySubscription(form_params){
+    let user = utilFunctionService.getLocalStorageService('user')
+    return this.execute('POST', '/api/v1/users/'+ user.id +'/razorpay_orders', form_params)
+  },
+
+  savePaymentSuccessResponse(database_order_id, form_params){
+    return this.execute('POST', '/api/v1/razorpay_orders/'+ database_order_id +'/payment_successes', form_params)
+  },
+
+  fetchOrders(){
+    let user = utilFunctionService.getLocalStorageService('user')
+    return this.execute('GET', '/api/v1/users/'+ user.id +'/razorpay_orders')
+  },
+
+  fetchSubscriptionAmount(){
+    return this.execute('GET', '/api/v1/subscriptions')
   }
 }

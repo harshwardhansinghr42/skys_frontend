@@ -24,7 +24,7 @@ export default {
         name: "Acme Corp",
         description: "Test Transaction",
         image: "https://example.com/your_logo",
-        order_id: "order_H7B5bRe1riNhQW", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+        order_id: "order_HDne3w4PF8o1qZ", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
         handler: function (response) {
           alert(response.razorpay_payment_id);
           alert(response.razorpay_order_id);
